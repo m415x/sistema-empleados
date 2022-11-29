@@ -12,7 +12,7 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'empleados'
 
-UPLOADS = os.path.join('src/uploads')
+UPLOADS = os.path.join('uploads')
 app.config['UPLOADS'] = UPLOADS  # Guardamos la ruta como un valor en la app
 
 mysql.init_app(app)
@@ -41,7 +41,7 @@ def delete(id):
     conn = mysql.connect()
     cursor = conn.cursor()
     
-    sql = f"SELECT FROM empleados WHERE id={id};"
+    sql = f"SELECT * FROM empleados WHERE id={id};"
     cursor.execute(sql)
     
     nombreFoto = cursor.fetchone()[0]
@@ -95,7 +95,7 @@ def store():
     
     if _foto.filename != '':
         nuevoNombreFoto = f"{tiempo}_{_foto.filename}"
-        _foto.save('src/uploads' + nuevoNombreFoto)
+        _foto.save('uploads' + nuevoNombreFoto)
         
     # f"INSERT INTO empleados (nombre, correo, foto) VALUES ({_nombre}, {_correo}, {nuevoNombreFoto});"
     sql = "INSERT INTO empleados (nombre, correo, foto) VALUES (%s, %s, %s);"
@@ -126,9 +126,9 @@ def update():
         now = datetime.now()
         tiempo = now.strftime('%Y%H%M%S')
         nuevoNombreFoto = f"{tiempo}_{_foto.filename}"
-        _foto.save('src/uploads/' + nuevoNombreFoto)
+        _foto.save('uploads/' + nuevoNombreFoto)
         
-        sql = f"SELECT fot FROM empleados WHERE id={id};"
+        sql = f"SELECT * FROM empleados WHERE id={id};"
         cursor.execute(sql)
         
         nombreFoto = cursor.fetchone()[0]
@@ -137,10 +137,10 @@ def update():
         
         os.remove(os.path.join(app.config['UPLOADS'], nombreFoto))
         
-        conn = mysql.connect()
-        cursor = conn.cursor()
-        
-    sql = f"UPDATE empleados SET 'nombre'='{_nombre}', 'correo'='{_correo}' WHERE id={id};"
+        # conn = mysql.connect()
+        # cursor = conn.cursor()
+    
+    sql = f"UPDATE empleados SET nombre={_nombre}, correo={_correo} WHERE id={id};"
     cursor.execute(sql)
     
     conn.commit()
