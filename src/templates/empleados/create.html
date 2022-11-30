@@ -1,14 +1,17 @@
 {% include 'header.html' %}
     <form action="/store" method="post" enctype="multipart/form-data">
-        <label for="txtNombre">Nombre: </label>
-        <input type="text" name="txtNombre" id="txtNombre">
         <br>
-        <label for="txtCorreo">Correo: </label>
-        <input type="email" name="txtCorreo" id="txtCorreo">
+        <div class="mb-3">
+            <label class="form-label" for="txtNombre">Nombre: </label>
+            <input class="form-control" type="text" name="txtNombre" id="txtNombre">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="txtCorreo">Correo: </label>
+            <input class="form-control" type="email" name="txtCorreo" id="txtCorreo">
+        </div>
+        <label class="form-label" for="txtFoto">Foto: </label>
+        <input class="btn" type="file" name="txtFoto" id="txtFoto">
         <br>
-        <label for="txtFoto">Foto: </label>
-        <input type="file" name="txtFoto" id="txtFoto">
-        <br>
-        <input type="submit" value="Agregar nuevo empleado">
+        <input class="btn btn-primary" type="submit" value="Agregar nuevo empleado">
     </form>
 {% include 'footer.html' %}
