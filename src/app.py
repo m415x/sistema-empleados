@@ -19,6 +19,17 @@ app.config['UPLOADS'] = UPLOADS  # Guardamos la ruta como un valor en la app
 mysql.init_app(app)
 
 
+#* QUERY-MYSQL * ----------------------------------------------------------------
+def queryMySQL(query, data = ()):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    if len(data) > 0:
+        cursor.execute(query, data)
+    else:
+        cursor.execute(query)
+    conn.commit()
+
+
 #* USERPIC * --------------------------------------------------------------------
 @app.route('/userpic/<path:nombreFoto>')
 def uploads(nombreFoto):
