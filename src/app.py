@@ -10,11 +10,11 @@ mysql = MySQL()
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
-# app.config['MYSQL_DATABASE_PORT'] = '3306'
+# app.config['MYSQL_DATABASE_PORT'] = '3306' # 404
 app.config['MYSQL_DATABASE_DB'] = 'empleados'
 
-UPLOADS = os.path.join('uploads')
-app.config['UPLOADS'] = UPLOADS  # Guardamos la ruta como un valor en la app
+app.config['UPLOADS'] = os.path.join('uploads')  # Guardamos la ruta como un valor en la app
+UPLOADS = app.config['UPLOADS']
 
 mysql.init_app(app)
 
@@ -47,7 +47,7 @@ def index():
     sql = "SELECT * FROM empleados;"
     cursor.execute(sql)
     empleados = cursor.fetchall()
-    
+    #print(empleados)
     conn.commit()
     
     return render_template('empleados/index.html', empleados=empleados)
@@ -68,7 +68,7 @@ def storage():
     _correo = request.form['txtCorreo']
     _foto = request.files['txtFoto']
     
-    now = datetime.now()
+    now = datetime.now() # Fecha y hora de subida
     tiempo = now.strftime('%Y%H%M%S')
     nuevoNombreFoto = ''
     
@@ -76,8 +76,7 @@ def storage():
         nuevoNombreFoto = f"{tiempo}_{_foto.filename}"
         _foto.save('uploads/' + nuevoNombreFoto)
         
-    # f"INSERT INTO empleados (nombre, correo, foto) VALUES ({_nombre}, {_correo}, {nuevoNombreFoto});" y eliminar: datos = (_nombre, _correo, nuevoNombreFoto)
-    sql = "INSERT INTO empleados (nombre, correo, foto) VALUES (%s, %s, %s);"
+    sql = "INSERT INTO empleados (nombre, correo, foto) VALUES (%s, %s, %s);" # f"INSERT INTO empleados (nombre, correo, foto) VALUES ({_nombre}, {_correo}, {nuevoNombreFoto});" y eliminar: datos = (_nombre, _correo, nuevoNombreFoto)
     datos = (_nombre, _correo, nuevoNombreFoto)
     
     conn = mysql.connect()
@@ -101,7 +100,7 @@ def delete(id):
     nombreFoto = cursor.fetchone()[0]
     
     try:
-        os.remove(os.path.join(app.config['UPLOADS'], nombreFoto))
+        os.remove(os.path.join(UPLOADS, nombreFoto))
     except:
         pass
     
@@ -122,7 +121,7 @@ def modify(id):
     
     sql = f"SELECT * FROM empleados WHERE id={id};"
     cursor.execute(sql)
-    empleado = cursor.fetchone()
+    empleado = cursor.fetchone() # Trae un solo empleado
     
     conn.commit()
     
@@ -153,11 +152,11 @@ def update():
         
         
         nombreFoto = cursor.fetchone()[0]
-        borrarEstaFoto = os.path.join(app.config['UPLOADS'], nombreFoto)
+        borrarEstaFoto = os.path.join(UPLOADS, nombreFoto)
         print(borrarEstaFoto)
         
         try:
-            os.remove(os.path.join(app.config['UPLOADS'], nombreFoto))
+            os.remove(os.path.join(UPLOADS, nombreFoto))
         except:
             pass
         
