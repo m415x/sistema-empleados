@@ -14,13 +14,13 @@
             <tr>
                 <td>{{empleado[0]}}</td>
                 <td>
-                    <img width="100" src="userpic/{{empleado[3]}}" alt="Foto de perfil">
+                    <img class="img-thumbnail" width="100" src="userpic/{{empleado[3]}}" alt="Foto de perfil">
                 </td>
                 <td>{{empleado[1]}}</td>
                 <td>{{empleado[2]}}</td>
                 <td>
                     <a class="btn btn-warning" href="/modify/{{empleado[0]}}">Editar</a>
-                    <a id="btn-borrar" class="btn btn-danger" href="/delete/{{empleado[0]}}">Borrar</a>
+                    <a id="btn-borrar" onclick="confirm('¿Desea borrar al empleado {{empleado[1]}}?')" class="btn btn-danger" href="/delete/{{empleado[0]}}">Borrar</a>
                 </td>
             </tr>
             {% endfor %}

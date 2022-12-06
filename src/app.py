@@ -1,16 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 from flaskext.mysql import MySQL
 from datetime import datetime
 import os
 
 
 app = Flask(__name__)
+app.secret_key = 'codoacodo'
 mysql = MySQL()
 
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
-# app.config['MYSQL_DATABASE_PORT'] = '3306' # 404
 app.config['MYSQL_DATABASE_DB'] = 'empleados'
 app.config['UPLOADS'] = os.path.join('uploads') # Guardamos la ruta de fotos como un valor en la app
 
@@ -22,21 +22,11 @@ conn = mysql.connect()
 cursor = conn.cursor()
 
 
-# * QUERY-MYSQL * ------------------------------------------------------------------------------
-# def queryMySQL(query, data=()):
-#     if len(data) > 0:
-#         cursor.execute(query, data)
-#     else:
-#         cursor.execute(query)
-#     conn.commit()
-#     return cursor.
-
-
 # * USERPIC * ----------------------------------------------------------------------------------
 @app.route('/userpic/<path:nombreFoto>')
 def uploads(nombreFoto):
 
-    return send_from_directory(os.path.join('uploads'), nombreFoto)
+    return send_from_directory(UPLOADS, nombreFoto)
 
 
 # * INDEX * ------------------------------------------------------------------------------------
@@ -63,12 +53,13 @@ def create():
 @app.route('/store', methods=['POST'])
 def storage():
     
-    sql = "INSERT INTO empleados (nombre, correo, foto) VALUES (%s, %s, %s);"
-    # f"INSERT INTO empleados (nombre, correo, foto) VALUES ({_nombre}, {_correo}, {nuevoNombreFoto});" y eliminar datos
-    
     _nombre = request.form['txtNombre']
     _correo = request.form['txtCorreo']
     _foto = request.files['txtFoto']
+    
+    if _nombre == '' or _correo == '' or _foto.filename == '':
+        flash('¡Recuerde llenar todos los campos!')
+        return redirect(url_for('create'))
 
     now = datetime.now()  # Fecha y hora de subida
     tiempo = now.strftime('%Y%H%M%S')
@@ -78,6 +69,8 @@ def storage():
         nuevoNombreFoto = f"{tiempo}_{_foto.filename}"
         _foto.save('uploads/' + nuevoNombreFoto)
 
+    sql = "INSERT INTO empleados (nombre, correo, foto) VALUES (%s, %s, %s);"
+    # f"INSERT INTO empleados (nombre, correo, foto) VALUES ('{_nombre}', '{_correo}', '{nuevoNombreFoto}');" y eliminar datos
     datos = (_nombre, _correo, nuevoNombreFoto)
 
     cursor.execute(sql, datos)
@@ -114,7 +107,7 @@ def modify(id):
 
     sql = f"SELECT * FROM empleados WHERE id={id};"
     cursor.execute(sql)
-    empleado = cursor.fetchone()  # Trae un solo empleado
+    empleado = cursor.fetchone() # Trae un solo empleado
 
     conn.commit()
 
