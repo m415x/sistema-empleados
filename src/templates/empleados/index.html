@@ -6,7 +6,7 @@
                 <th>Foto</th>
                 <th>Nombre</th>
                 <th>Correo</th>
-                <th>Acciones</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -20,8 +20,7 @@
                 <td>{{empleado[2]}}</td>
                 <td>
                     <a class="btn btn-warning" href="/modify/{{empleado[0]}}">Editar</a>
-                    |
-                    <a class="btn btn-danger" href="/delete/{{empleado[0]}}">Borrar</a>
+                    <a id="btn-borrar" class="btn btn-danger" href="/delete/{{empleado[0]}}">Borrar</a>
                 </td>
             </tr>
             {% endfor %}
